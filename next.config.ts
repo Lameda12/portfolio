@@ -1,8 +1,11 @@
 import type { NextConfig } from "next";
+import path from "path";
 
 const nextConfig: NextConfig = {
-  /* config options here */
-  reactStrictMode: false, // Disabled due to React 19 + R3F compatibility
+  reactStrictMode: true,
+  turbopack: {
+    root: path.join(__dirname),
+  },
 };
 
 export default nextConfig;

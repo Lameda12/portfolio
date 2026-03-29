@@ -1,8 +1,0 @@
-{
-  "mcpServers": {
-    "motion": {
-      "command": "npx",
-      "args": ["-y", "motion-ai"]
-    }
-  }
-}

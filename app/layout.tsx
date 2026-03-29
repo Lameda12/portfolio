@@ -1,21 +1,17 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import "./animations.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  variable: "--font-jetbrains-mono",
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
-  title: "Alamedin Sabit | Computer Science & AI Developer",
-  description: "Computer Science student at Dalhousie University specializing in AI, computer vision, and web development. Founder of MinTask.",
+  title: "Alamedin Sabit (Lameda12) · Terminal",
+  description:
+    "CS @ Dalhousie · Halifax. TradeLock, Comply, and shipping weird software. Fake SSH session aesthetic.",
 };
 
 export default function RootLayout({
@@ -25,9 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={`${jetbrainsMono.variable} bg-black antialiased`}>
         {children}
       </body>
     </html>
