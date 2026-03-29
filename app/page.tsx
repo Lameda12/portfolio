@@ -1,155 +1,227 @@
-'use client'
+"use client";
 
-import { Suspense, useEffect, useState } from 'react'
-import { Canvas } from '@react-three/fiber'
-import { ScrollControls, Scroll, Environment, Loader } from '@react-three/drei'
-import { motion } from 'framer-motion'
-import * as THREE from 'three'
-import Scene from '@/components/canvas/Scene'
-import ReducedMotionFallback from '@/components/canvas/ReducedMotionFallback'
-import { GitHubIcon, LinkedInIcon, XIcon, EmailIcon } from '@/components/SocialIcons'
-import AnimatedSection from '@/components/AnimatedSection'
-import { HoleBackground } from '@/components/animate-ui/components/backgrounds/hole'
+import {
+  BootSequence,
+  CommandBlock,
+  CRTScanlines,
+  CRTVignette,
+  BlinkingCursor,
+  ProjectCard,
+  TerminalLine,
+} from "@/components/Terminal";
+import { useState } from "react";
+
+const ASCII_HEADER_WIDE = `
+██╗      █████╗ ███╗   ███╗███████╗██████╗  █████╗  ██╗██████╗ 
+██║     ██╔══██╗████╗ ████║██╔════╝██╔══██╗██╔══██╗███║╚════██╗
+██║     ███████║██╔████╔██║█████╗  ██║  ██║███████║╚██║ █████╔╝
+██║     ██╔══██║██║╚██╔╝██║██╔══╝  ██║  ██║██╔══██║ ██║██╔═══╝ 
+███████╗██║  ██║██║ ╚═╝ ██║███████╗██████╔╝██║  ██║████╗███████╗
+╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝╚═════╝ ╚═╝  ╚═╝╚═══╝╚══════╝`;
+
+const ASCII_HEADER_NARROW = `
+╔══════════════════════════════════╗
+║  lameda12@portfolio ~ HALIFAX-NS ║
+║  Alamedin Sabit · CS @ Dal '28   ║
+╚══════════════════════════════════╝`;
+
+const BOOT_LINES = [
+  "[ ok ] mounting virtual shell…",
+  "[ ok ] resolving host: portfolio.local",
+  "hostname: sabit-core · region: atlantic-canada",
+  "uptime: shipping since first “Hello, world!”",
+  "location: Halifax, Nova Scotia, Canada",
+  'status: building TradeLock · studying @ Dal (Winter 2028)',
+  "motd: Welcome — this is a portfolio, not a real SSH box.",
+  "",
+  "Initializing UI…",
+];
 
 export default function Home() {
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  if (!mounted) {
-    return null
-  }
+  const [bootDone, setBootDone] = useState(false);
 
   return (
     <>
-      <ReducedMotionFallback />
-      <main className="h-screen w-full">
-        <Canvas 
-          key="main-canvas"
-          camera={{ fov: 45, position: [0, 1.2, 6] }}
-          gl={{ antialias: true, alpha: false }}
-          dpr={[1, 2]} // Adaptive pixel ratio for performance
+      <CRTVignette />
+      <CRTScanlines />
+
+      <div className="crt-glow relative z-10 min-h-screen px-4 pb-28 pt-6 sm:px-8 sm:pt-10">
+        {/* Boot overlay */}
+        <div
+          className={`fixed inset-0 z-40 overflow-auto bg-black px-4 py-8 transition-opacity duration-500 sm:px-10 ${
+            bootDone ? "pointer-events-none opacity-0" : "opacity-100"
+          }`}
+          aria-hidden={bootDone}
         >
-          <color attach="background" args={['#0b0d12']} />
-          <ScrollControls pages={4} damping={0.18}>
-            <Suspense fallback={null}>
-              <Scene />
-            </Suspense>
-            <Scroll html style={{ width: '100%' }}>
-              <section className="section s1">
-                <AnimatedSection animationClass="animate-spring-smooth">
-                  <h1>Alamedin Sabit</h1>
-                </AnimatedSection>
-                <AnimatedSection animationClass="animate-spring-smooth" delay="delay-200">
-                  <p>
-                    Computer Science student at Dalhousie University passionate about AI, 
-                    computer vision, and building innovative web applications that solve real problems.
-                  </p>
-                </AnimatedSection>
-              </section>
+          <div className="crt-glow mx-auto max-w-3xl">
+            <p className="text-[var(--crt-dim)]">boot sequence — press nothing</p>
+            <BootSequence
+              lines={BOOT_LINES}
+              prompt="$ "
+              msPerChar={8}
+              onComplete={() => setBootDone(true)}
+            />
+          </div>
+        </div>
 
-              <section className="section s2">
-                <AnimatedSection animationClass="animate-spring-bouncy">
-                  <h2>Featured Projects</h2>
-                </AnimatedSection>
-                <AnimatedSection animationClass="animate-spring-bouncy" delay="delay-100">
-                  <p>
-                    From Eye Draw, a computer vision program using real-time eye tracking, 
-                    to MinTask, a minimal to-do app loved for its clean design—each project 
-                    showcases practical AI and web development skills.
-                  </p>
-                </AnimatedSection>
-                <AnimatedSection animationClass="animate-rotate-scale" delay="delay-300">
-                  <a 
-                    href="https://github.com/Lameda12" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="button-spring"
-                  >
-                    View GitHub Projects
-                  </a>
-                </AnimatedSection>
-              </section>
+        <main className="relative mx-auto max-w-4xl font-mono text-[var(--crt-fg)]">
+          <header className="mb-10">
+            <pre className="mb-2 hidden max-w-full overflow-x-auto text-[0.32rem] leading-none text-[var(--crt-accent)] sm:block sm:text-[0.42rem] md:text-[0.48rem]">
+              {ASCII_HEADER_WIDE}
+            </pre>
+            <pre className="mb-4 max-w-full overflow-x-auto text-[0.62rem] leading-tight text-[var(--crt-accent)] sm:hidden">
+              {ASCII_HEADER_NARROW}
+            </pre>
+            <TerminalLine dim>
+              Session: guest@portfolio · <span className="text-[var(--crt-accent)]">read-only</span>{" "}
+              MOTD
+            </TerminalLine>
+            <TerminalLine dim>
+              Stack hints: Next.js · Python · TypeScript · FastAPI · Claude API · PostgreSQL · MCP
+            </TerminalLine>
+          </header>
 
-              <section className="section s3">
-                <AnimatedSection animationClass="animate-spring-elastic">
-                  <h2>Skills & Experience</h2>
-                </AnimatedSection>
-                <AnimatedSection animationClass="animate-spring-elastic" delay="delay-200">
-                  <p>
-                    Proficient in Python, Java, JavaScript, HTML, and CSS. 
-                    Experience with TensorFlow, computer vision, data analytics, 
-                    and responsive design. Founder of MinTask.
-                  </p>
-                </AnimatedSection>
-              </section>
+          {/* whoami */}
+          <CommandBlock command="whoami">
+            <TerminalLine>name: Alamedin Sabit</TerminalLine>
+            <TerminalLine>alias: Lameda12</TerminalLine>
+            <TerminalLine>loc: Halifax, Nova Scotia</TerminalLine>
+            <TerminalLine>edu: Computer Science · Dalhousie · Winter 2028</TerminalLine>
+            <TerminalLine>role: CS student → founder</TerminalLine>
+            <TerminalLine>
+              focus: <span className="text-[var(--crt-accent)]">building TradeLock</span>
+            </TerminalLine>
+          </CommandBlock>
 
-              <section className="section s4">
-                <AnimatedSection animationClass="animate-bounce-drop">
-                  <h2>Let&apos;s Connect</h2>
-                </AnimatedSection>
-                <AnimatedSection animationClass="animate-bounce-drop" delay="delay-100">
-                  <p>
-                    Interested in AI, data science, and product development? 
-                    Let&apos;s collaborate on innovative projects.
-                  </p>
-                </AnimatedSection>
-                <AnimatedSection animationClass="animate-bounce-drop" delay="delay-200">
-                  <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-                    <a 
-                      href="mailto:asabitt29@gmail.com" 
-                      style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
-                      className="button-spring"
-                    >
-                      <EmailIcon />
-                      <span>Email Me</span>
-                    </a>
-                    <a 
-                      href="https://github.com/Lameda12" 
-                      target="_blank" 
-                      rel="noopener noreferrer" 
-                      style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
-                      className="button-spring"
-                    >
-                      <GitHubIcon />
-                      <span>GitHub</span>
-                    </a>
-                    <a 
-                      href="https://x.com/AmadiSabit" 
-                      target="_blank" 
-                      rel="noopener noreferrer" 
-                      style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
-                      className="button-spring"
-                    >
-                      <XIcon />
-                      <span>X</span>
-                    </a>
-                    <a 
-                      href="https://www.linkedin.com/in/alamedin-sabit" 
-                      target="_blank" 
-                      rel="noopener noreferrer" 
-                      style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
-                      className="button-spring"
-                    >
-                      <LinkedInIcon />
-                      <span>LinkedIn</span>
-                    </a>
-                  </div>
-                </AnimatedSection>
-              </section>
-            </Scroll>
-          </ScrollControls>
-          <Environment preset="city" />
-        </Canvas>
-        <Loader 
-          containerStyles={{ background: '#0b0d12' }}
-          innerStyles={{ background: '#6366f1' }}
-          barStyles={{ background: '#818cf8' }}
-          dataStyles={{ color: '#e0e7ff' }}
-        />
-      </main>
+          <CommandBlock command="ls -la ~/projects">
+            <TerminalLine dim>total 6 · directories are lies, these are ships in the harbor</TerminalLine>
+            <ProjectCard
+              name="TradeLock"
+              description="Licensed trades marketplace for Canada — discovery, compliance, and payouts that feel sane."
+              stack="Next.js · FastAPI · PostgreSQL · Stripe Connect"
+              href="https://tradelockapp.ca"
+            />
+            <ProjectCard
+              name="Comply"
+              description="CLI + MCP server: enforce team conventions on git diffs via LLM, regex, or AST rules."
+              stack="TypeScript · MCP · CLI"
+              href="https://comply-docs.vercel.app"
+            />
+            <ProjectCard
+              name="AniScope"
+              description="Anime discovery — tasteful rails, obsessive metadata, late-night scrolling energy."
+              stack="Next.js · TypeScript"
+              href="https://ani-scoupe.vercel.app"
+            />
+            <ProjectCard
+              name="commitcraft"
+              description="CLI for AI-written commits — multi-provider, zero cringe templates."
+              stack="TypeScript · Claude API"
+            />
+            <ProjectCard
+              name="Eye-Draw"
+              description="Draw on a canvas using eye tracking — OpenCV pipeline, calibration chaos, fun demos."
+              stack="Python · OpenCV"
+            />
+            <ProjectCard
+              name="Paul Graham Bot"
+              description="RAG over PG essays — opinions distilled, citations (mostly) intact."
+              stack="Python · embeddings · RAG"
+            />
+          </CommandBlock>
+
+          <CommandBlock command="cat ~/skills.txt">
+            <TerminalLine>
+              Languages: TypeScript · Python · SQL · a little Rust curiosity
+            </TerminalLine>
+            <TerminalLine>
+              Web: Next.js App Router · React · Tailwind · edge deployments on Vercel
+            </TerminalLine>
+            <TerminalLine>
+              Backend: FastAPI · PostgreSQL · Stripe Connect · pragmatic schema design
+            </TerminalLine>
+            <TerminalLine>
+              AI: Claude API · RAG · MCP tooling · diff-aware LLM workflows (see Comply)
+            </TerminalLine>
+            <TerminalLine dim>
+              Tags: Next.js · Python · TypeScript · FastAPI · Claude API · PostgreSQL · MCP
+            </TerminalLine>
+          </CommandBlock>
+
+          <CommandBlock command="cat ~/links.txt">
+            <TerminalLine>
+              github:{" "}
+              <a
+                className="text-[var(--crt-link)] underline underline-offset-2 hover:text-[var(--crt-accent)]"
+                href="https://github.com/Lameda12"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                github.com/Lameda12
+              </a>
+            </TerminalLine>
+            <TerminalLine>
+              x:{" "}
+              <a
+                className="text-[var(--crt-link)] underline underline-offset-2 hover:text-[var(--crt-accent)]"
+                href="https://x.com/amadisabit"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                @amadisabit
+              </a>
+            </TerminalLine>
+            <TerminalLine>
+              linkedin:{" "}
+              <a
+                className="text-[var(--crt-link)] underline underline-offset-2 hover:text-[var(--crt-accent)]"
+                href="https://www.linkedin.com/in/alamedin-sabit"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                in/alamedin-sabit
+              </a>
+            </TerminalLine>
+            <TerminalLine>
+              product hunt:{" "}
+              <a
+                className="text-[var(--crt-link)] underline underline-offset-2 hover:text-[var(--crt-accent)]"
+                href="https://www.producthunt.com/@amadisabit"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                @amadisabit
+              </a>
+            </TerminalLine>
+            <TerminalLine>
+              comply repo:{" "}
+              <a
+                className="text-[var(--crt-link)] underline underline-offset-2 hover:text-[var(--crt-accent)]"
+                href="https://github.com/Lameda12/Comply"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                github.com/Lameda12/Comply
+              </a>
+            </TerminalLine>
+          </CommandBlock>
+
+          <footer className="mt-12 border-t border-[var(--crt-dim)] pt-6 text-sm text-[var(--crt-dim)]">
+            <p>
+              EOF — this page is static HTML cosplaying as a shell.
+              <BlinkingCursor className="ml-1 align-baseline" />
+            </p>
+          </footer>
+        </main>
+
+        <div
+          className="crt-glow pointer-events-none fixed bottom-4 right-4 z-30 flex items-center gap-1 font-mono text-[var(--crt-accent)]"
+          aria-hidden
+        >
+          <span className="text-[var(--crt-dim)]">_</span>
+          <BlinkingCursor />
+        </div>
+      </div>
     </>
-  )
+  );
 }
