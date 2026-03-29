@@ -46,3 +46,5 @@ next-env.d.ts
 # 3D models (optional - uncomment if you don't want to commit your models)
 # /public/models/*.glb
 # /public/models/*.gltf
+.vscode/
+.cursor/
