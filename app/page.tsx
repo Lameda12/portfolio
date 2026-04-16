@@ -69,22 +69,10 @@ export default async function Home() {
 
           {/* ── Header ── */}
           <header className="mb-10">
-            <div className="mb-1 flex items-center gap-3">
-              <div className="shrink-0 border border-[var(--crt-muted)] p-0.5">
-                <Image
-                  src="/profile.jpg"
-                  alt="Lameda12 logo"
-                  width={36}
-                  height={36}
-                  className="block"
-                  priority
-                />
-              </div>
-              <h1 className="text-2xl font-semibold text-[var(--crt-accent)] crt-glow-strong sm:text-3xl">
-                Alamedin Sabit
-                <BlinkingCursor className="ml-2 align-baseline opacity-70" />
-              </h1>
-            </div>
+            <h1 className="mb-1 text-2xl font-semibold text-[var(--crt-accent)] crt-glow-strong sm:text-3xl">
+              Alamedin Sabit
+              <BlinkingCursor className="ml-2 align-baseline opacity-70" />
+            </h1>
             <p className="mb-1 text-sm text-[var(--crt-dim)] sm:text-base">
               CS student → founder · Halifax, NS
             </p>
