@@ -1,83 +1,30 @@
 "use client";
 
 import {
-  BootSequence,
   CommandBlock,
-  CRTScanlines,
   CRTVignette,
   BlinkingCursor,
   ProjectCard,
   TerminalLine,
 } from "@/components/Terminal";
-import { useState } from "react";
-
-const ASCII_HEADER_WIDE = `
-██╗      █████╗ ███╗   ███╗███████╗██████╗  █████╗  ██╗██████╗ 
-██║     ██╔══██╗████╗ ████║██╔════╝██╔══██╗██╔══██╗███║╚════██╗
-██║     ███████║██╔████╔██║█████╗  ██║  ██║███████║╚██║ █████╔╝
-██║     ██╔══██║██║╚██╔╝██║██╔══╝  ██║  ██║██╔══██║ ██║██╔═══╝ 
-███████╗██║  ██║██║ ╚═╝ ██║███████╗██████╔╝██║  ██║████╗███████╗
-╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝╚═════╝ ╚═╝  ╚═╝╚═══╝╚══════╝`;
-
-const ASCII_HEADER_NARROW = `
-╔══════════════════════════════════╗
-║  lameda12@portfolio ~ HALIFAX-NS ║
-║  Alamedin Sabit · CS @ Dal '28   ║
-╚══════════════════════════════════╝`;
-
-const BOOT_LINES = [
-  "[ ok ] mounting virtual shell…",
-  "[ ok ] resolving host: portfolio.local",
-  "hostname: sabit-core · region: atlantic-canada",
-  "uptime: shipping since first “Hello, world!”",
-  "location: Halifax, Nova Scotia, Canada",
-  'status: building TradeLock · studying @ Dal (Winter 2028)',
-  "motd: Welcome — this is a portfolio, not a real SSH box.",
-  "",
-  "Initializing UI…",
-];
 
 export default function Home() {
-  const [bootDone, setBootDone] = useState(false);
-
   return (
     <>
       <CRTVignette />
-      <CRTScanlines />
 
-      <div className="crt-glow relative z-10 min-h-screen px-4 pb-28 pt-6 sm:px-8 sm:pt-10">
-        {/* Boot overlay */}
-        <div
-          className={`fixed inset-0 z-40 overflow-auto bg-black px-4 py-8 transition-opacity duration-500 sm:px-10 ${
-            bootDone ? "pointer-events-none opacity-0" : "opacity-100"
-          }`}
-          aria-hidden={bootDone}
-        >
-          <div className="crt-glow mx-auto max-w-3xl">
-            <p className="text-[var(--crt-dim)]">boot sequence — press nothing</p>
-            <BootSequence
-              lines={BOOT_LINES}
-              prompt="$ "
-              msPerChar={8}
-              onComplete={() => setBootDone(true)}
-            />
-          </div>
-        </div>
-
+      <div className="relative z-10 min-h-screen px-4 pb-28 pt-6 sm:px-8 sm:pt-10">
         <main className="relative mx-auto max-w-4xl font-mono text-[var(--crt-fg)]">
           <header className="mb-10">
-            <pre className="mb-2 hidden max-w-full overflow-x-auto text-[0.32rem] leading-none text-[var(--crt-accent)] sm:block sm:text-[0.42rem] md:text-[0.48rem]">
-              {ASCII_HEADER_WIDE}
-            </pre>
-            <pre className="mb-4 max-w-full overflow-x-auto text-[0.62rem] leading-tight text-[var(--crt-accent)] sm:hidden">
-              {ASCII_HEADER_NARROW}
-            </pre>
+            <h1 className="mb-1 text-2xl font-semibold text-[var(--crt-accent)] crt-glow-strong sm:text-3xl">
+              Alamedin Sabit
+              <BlinkingCursor className="ml-2 align-baseline opacity-70" />
+            </h1>
+            <p className="mb-4 text-sm text-[var(--crt-dim)] sm:text-base">
+              CS student → founder · Halifax, NS · building TradeLock
+            </p>
             <TerminalLine dim>
-              Session: guest@portfolio · <span className="text-[var(--crt-accent)]">read-only</span>{" "}
-              MOTD
-            </TerminalLine>
-            <TerminalLine dim>
-              Stack hints: Next.js · Python · TypeScript · FastAPI · Claude API · PostgreSQL · MCP
+              guest@portfolio:~$ — stack: Next.js · Python · TypeScript · FastAPI · Claude API
             </TerminalLine>
           </header>
 
@@ -93,6 +40,7 @@ export default function Home() {
             </TerminalLine>
           </CommandBlock>
 
+          {/* projects */}
           <CommandBlock command="ls -la ~/projects">
             <TerminalLine dim>total 6 · directories are lies, these are ships in the harbor</TerminalLine>
             <ProjectCard
@@ -130,24 +78,55 @@ export default function Home() {
             />
           </CommandBlock>
 
-          <CommandBlock command="cat ~/skills.txt">
+          {/* tech stack */}
+          <CommandBlock command="cat ~/stack.txt">
             <TerminalLine>
-              Languages: TypeScript · Python · SQL · a little Rust curiosity
+              Languages:  TypeScript · Python · SQL · Rust (learning)
             </TerminalLine>
             <TerminalLine>
-              Web: Next.js App Router · React · Tailwind · edge deployments on Vercel
+              Web:        Next.js App Router · React · Tailwind CSS · Vercel edge
             </TerminalLine>
             <TerminalLine>
-              Backend: FastAPI · PostgreSQL · Stripe Connect · pragmatic schema design
+              Backend:    FastAPI · PostgreSQL · Stripe Connect · schema design
             </TerminalLine>
             <TerminalLine>
-              AI: Claude API · RAG · MCP tooling · diff-aware LLM workflows (see Comply)
-            </TerminalLine>
-            <TerminalLine dim>
-              Tags: Next.js · Python · TypeScript · FastAPI · Claude API · PostgreSQL · MCP
+              Infra:      Vercel · Docker basics · Git-first workflows
             </TerminalLine>
           </CommandBlock>
 
+          {/* ai skills */}
+          <CommandBlock command="cat ~/ai.txt">
+            <TerminalLine>
+              Models:     Claude API (Anthropic) · OpenAI-compatible interfaces
+            </TerminalLine>
+            <TerminalLine>
+              Tooling:    MCP server development · tool-use patterns · streaming
+            </TerminalLine>
+            <TerminalLine>
+              Techniques: RAG pipelines · embeddings · diff-aware LLM workflows
+            </TerminalLine>
+            <TerminalLine dim>
+              Built:      Comply (MCP linter) · commitcraft (AI commits) · PG Bot (RAG)
+            </TerminalLine>
+          </CommandBlock>
+
+          {/* soft skills */}
+          <CommandBlock command="cat ~/soft.txt">
+            <TerminalLine>
+              Shipping:   bias toward done — ideas are cheap, deployed things count
+            </TerminalLine>
+            <TerminalLine>
+              Building:   full-stack ownership from schema to UI to stripe webhook
+            </TerminalLine>
+            <TerminalLine>
+              Learning:   CS fundamentals + self-directed depth (see every project)
+            </TerminalLine>
+            <TerminalLine>
+              Mindset:    indie hacker roots · founder mentality · ship → iterate
+            </TerminalLine>
+          </CommandBlock>
+
+          {/* links */}
           <CommandBlock command="cat ~/links.txt">
             <TerminalLine>
               github:{" "}
@@ -206,7 +185,7 @@ export default function Home() {
             </TerminalLine>
           </CommandBlock>
 
-          <footer className="mt-12 border-t border-[var(--crt-dim)] pt-6 text-sm text-[var(--crt-dim)]">
+          <footer className="mt-12 border-t border-[var(--crt-muted)] pt-6 text-sm text-[var(--crt-dim)]">
             <p>
               EOF — this page is static HTML cosplaying as a shell.
               <BlinkingCursor className="ml-1 align-baseline" />
@@ -215,7 +194,7 @@ export default function Home() {
         </main>
 
         <div
-          className="crt-glow pointer-events-none fixed bottom-4 right-4 z-30 flex items-center gap-1 font-mono text-[var(--crt-accent)]"
+          className="pointer-events-none fixed bottom-4 right-4 z-30 flex items-center gap-1 font-mono text-[var(--crt-accent)]"
           aria-hidden
         >
           <span className="text-[var(--crt-dim)]">_</span>
