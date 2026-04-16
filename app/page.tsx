@@ -1,5 +1,4 @@
-"use client";
-
+import Image from "next/image";
 import {
   CommandBlock,
   CRTVignette,
@@ -7,11 +6,63 @@ import {
   ProjectCard,
   TerminalLine,
 } from "@/components/Terminal";
+import { EasterEgg } from "@/components/EasterEgg";
+import { BuildingStreak } from "@/components/BuildingStreak";
 
-export default function Home() {
+type GitCommit = {
+  repo: string;
+  message: string;
+  time: string;
+};
+
+function timeAgo(iso: string): string {
+  const diff = Date.now() - new Date(iso).getTime();
+  const h = Math.floor(diff / 3_600_000);
+  if (h < 1) return "just now";
+  if (h < 24) return `${h}h ago`;
+  const d = Math.floor(h / 24);
+  if (d < 30) return `${d}d ago`;
+  return `${Math.floor(d / 30)}mo ago`;
+}
+
+async function getGitHubActivity(): Promise<GitCommit[]> {
+  try {
+    const res = await fetch(
+      "https://api.github.com/users/Lameda12/events/public",
+      {
+        next: { revalidate: 3600 },
+        headers: { Accept: "application/vnd.github.v3+json" },
+      }
+    );
+    if (!res.ok) return [];
+    const events: {
+      type: string;
+      repo: { name: string };
+      payload: { commits: { message: string }[] };
+      created_at: string;
+    }[] = await res.json();
+    return events
+      .filter((e) => e.type === "PushEvent")
+      .flatMap((e) =>
+        (e.payload?.commits ?? []).slice(0, 2).map((c) => ({
+          repo: (e.repo?.name ?? "").replace("Lameda12/", ""),
+          message: (c.message ?? "").split("\n")[0],
+          time: e.created_at,
+        }))
+      )
+      .slice(0, 6);
+  } catch {
+    return [];
+  }
+}
+
+export default async function Home() {
+  const commits = await getGitHubActivity();
+
   return (
     <>
       <CRTVignette />
+      <EasterEgg />
 
       <div className="relative z-10 min-h-screen px-4 pb-28 pt-6 sm:px-8 sm:pt-10">
         <main className="relative mx-auto max-w-4xl font-mono text-[var(--crt-fg)]">
@@ -20,29 +71,81 @@ export default function Home() {
               Alamedin Sabit
               <BlinkingCursor className="ml-2 align-baseline opacity-70" />
             </h1>
-            <p className="mb-4 text-sm text-[var(--crt-dim)] sm:text-base">
-              CS student → founder · Halifax, NS · building TradeLock
+            <p className="mb-1 text-sm text-[var(--crt-dim)] sm:text-base">
+              CS student → founder · Halifax, NS
             </p>
-            <TerminalLine dim>
-              guest@portfolio:~$ — stack: Next.js · Python · TypeScript · FastAPI · Claude API
-            </TerminalLine>
+            <BuildingStreak />
+            <div className="mt-3">
+              <TerminalLine dim>
+                guest@portfolio:~$ — stack: Next.js · Python · TypeScript ·
+                FastAPI · Claude API
+              </TerminalLine>
+            </div>
           </header>
 
           {/* whoami */}
           <CommandBlock command="whoami">
-            <TerminalLine>name: Alamedin Sabit</TerminalLine>
-            <TerminalLine>alias: Lameda12</TerminalLine>
-            <TerminalLine>loc: Halifax, Nova Scotia</TerminalLine>
-            <TerminalLine>edu: Computer Science · Dalhousie · Winter 2028</TerminalLine>
-            <TerminalLine>role: CS student → founder</TerminalLine>
-            <TerminalLine>
-              focus: <span className="text-[var(--crt-accent)]">building TradeLock</span>
-            </TerminalLine>
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-6">
+              <div className="shrink-0">
+                <div className="inline-block border border-[var(--crt-muted)] p-0.5">
+                  <Image
+                    src="/profile.jpg"
+                    alt="Alamedin Sabit"
+                    width={110}
+                    height={110}
+                    className="block"
+                    priority
+                  />
+                </div>
+                <p className="mt-1 text-center text-[10px] text-[var(--crt-muted)]">
+                  portrait.jpg
+                </p>
+              </div>
+              <div>
+                <TerminalLine>name: Alamedin Sabit</TerminalLine>
+                <TerminalLine>alias: Lameda12</TerminalLine>
+                <TerminalLine>loc: Halifax, Nova Scotia</TerminalLine>
+                <TerminalLine>
+                  edu: Computer Science · Dalhousie · Winter 2028
+                </TerminalLine>
+                <TerminalLine>role: CS student → founder</TerminalLine>
+                <TerminalLine>
+                  focus:{" "}
+                  <span className="text-[var(--crt-accent)]">
+                    building TradeLock
+                  </span>
+                </TerminalLine>
+              </div>
+            </div>
           </CommandBlock>
+
+          {/* github activity */}
+          {commits.length > 0 && (
+            <CommandBlock command="git log --public --oneline">
+              {commits.map((c, i) => (
+                <div
+                  key={i}
+                  className="mb-1.5 flex flex-wrap items-baseline gap-x-2 text-sm sm:text-[0.95rem]"
+                >
+                  <span className="shrink-0 text-[var(--crt-dim)]">
+                    [{c.repo}]
+                  </span>
+                  <span className="min-w-0 flex-1 text-[var(--crt-fg)]">
+                    {c.message}
+                  </span>
+                  <span className="shrink-0 text-[10px] text-[var(--crt-muted)] sm:text-xs">
+                    {timeAgo(c.time)}
+                  </span>
+                </div>
+              ))}
+            </CommandBlock>
+          )}
 
           {/* projects */}
           <CommandBlock command="ls -la ~/projects">
-            <TerminalLine dim>total 6 · directories are lies, these are ships in the harbor</TerminalLine>
+            <TerminalLine dim>
+              total 6 · directories are lies, these are ships in the harbor
+            </TerminalLine>
             <ProjectCard
               name="TradeLock"
               description="Licensed trades marketplace for Canada — discovery, compliance, and payouts that feel sane."
@@ -84,7 +187,8 @@ export default function Home() {
               Languages:  TypeScript · Python · SQL · Rust (learning)
             </TerminalLine>
             <TerminalLine>
-              Web:        Next.js App Router · React · Tailwind CSS · Vercel edge
+              Web:        Next.js App Router · React · Tailwind CSS · Vercel
+              edge
             </TerminalLine>
             <TerminalLine>
               Backend:    FastAPI · PostgreSQL · Stripe Connect · schema design
@@ -106,28 +210,42 @@ export default function Home() {
               Techniques: RAG pipelines · embeddings · diff-aware LLM workflows
             </TerminalLine>
             <TerminalLine dim>
-              Built:      Comply (MCP linter) · commitcraft (AI commits) · PG Bot (RAG)
+              Built:      Comply (MCP linter) · commitcraft (AI commits) · PG
+              Bot (RAG)
             </TerminalLine>
           </CommandBlock>
 
           {/* soft skills */}
           <CommandBlock command="cat ~/soft.txt">
             <TerminalLine>
-              Shipping:   bias toward done — ideas are cheap, deployed things count
+              Shipping:   bias toward done — ideas are cheap, deployed things
+              count
             </TerminalLine>
             <TerminalLine>
-              Building:   full-stack ownership from schema to UI to stripe webhook
+              Building:   full-stack ownership from schema to UI to stripe
+              webhook
             </TerminalLine>
             <TerminalLine>
-              Learning:   CS fundamentals + self-directed depth (see every project)
+              Learning:   CS fundamentals + self-directed depth (see every
+              project)
             </TerminalLine>
             <TerminalLine>
-              Mindset:    indie hacker roots · founder mentality · ship → iterate
+              Mindset:    indie hacker roots · founder mentality · ship →
+              iterate
             </TerminalLine>
           </CommandBlock>
 
           {/* links */}
           <CommandBlock command="cat ~/links.txt">
+            <TerminalLine>
+              email:{" "}
+              <a
+                className="text-[var(--crt-link)] underline underline-offset-2 hover:text-[var(--crt-accent)]"
+                href="mailto:asabitt29@gmail.com"
+              >
+                asabitt29@gmail.com
+              </a>
+            </TerminalLine>
             <TerminalLine>
               github:{" "}
               <a

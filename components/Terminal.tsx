@@ -1,8 +1,4 @@
-"use client";
-
-import {
-  type ReactNode,
-} from "react";
+import { type ReactNode } from "react";
 
 export function BlinkingCursor({ className = "" }: { className?: string }) {
   return (
@@ -38,9 +34,7 @@ export function CommandBlock({
         <span className="text-[var(--crt-accent)]">{command}</span>
         <BlinkingCursor className="opacity-40" />
       </h2>
-      <div className="terminal-indent">
-        {children}
-      </div>
+      <div className="terminal-indent">{children}</div>
     </section>
   );
 }
