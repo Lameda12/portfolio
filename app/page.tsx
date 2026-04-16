@@ -66,11 +66,25 @@ export default async function Home() {
 
       <div className="relative z-10 min-h-screen px-4 pb-28 pt-6 sm:px-8 sm:pt-10">
         <main className="relative mx-auto max-w-4xl font-mono text-[var(--crt-fg)]">
+
+          {/* ── Header ── */}
           <header className="mb-10">
-            <h1 className="mb-1 text-2xl font-semibold text-[var(--crt-accent)] crt-glow-strong sm:text-3xl">
-              Alamedin Sabit
-              <BlinkingCursor className="ml-2 align-baseline opacity-70" />
-            </h1>
+            <div className="mb-1 flex items-center gap-3">
+              <div className="shrink-0 border border-[var(--crt-muted)] p-0.5">
+                <Image
+                  src="/profile.jpg"
+                  alt="Lameda12 logo"
+                  width={36}
+                  height={36}
+                  className="block"
+                  priority
+                />
+              </div>
+              <h1 className="text-2xl font-semibold text-[var(--crt-accent)] crt-glow-strong sm:text-3xl">
+                Alamedin Sabit
+                <BlinkingCursor className="ml-2 align-baseline opacity-70" />
+              </h1>
+            </div>
             <p className="mb-1 text-sm text-[var(--crt-dim)] sm:text-base">
               CS student → founder · Halifax, NS
             </p>
@@ -83,7 +97,7 @@ export default async function Home() {
             </div>
           </header>
 
-          {/* whoami */}
+          {/* ── whoami ── */}
           <CommandBlock command="whoami">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-6">
               <div className="shrink-0">
@@ -119,7 +133,110 @@ export default async function Home() {
             </div>
           </CommandBlock>
 
-          {/* github activity */}
+          {/* ── About Me ── */}
+          <CommandBlock command="cat ~/about.me">
+            {/* Meme — floated right on desktop, below on mobile */}
+            <div className="mb-4 float-none sm:float-right sm:ml-6 sm:mb-2 flex flex-col items-center">
+              <div className="border border-[var(--crt-muted)] p-0.5 inline-block">
+                <Image
+                  src="/meme.jpg"
+                  alt="me shipping at 2am"
+                  width={140}
+                  height={160}
+                  className="block"
+                />
+              </div>
+              <p className="mt-1 text-center text-[10px] text-[var(--crt-dim)] max-w-[140px]">
+                me shipping to prod at 2am 🚬
+              </p>
+            </div>
+
+            <TerminalLine>
+              👋{" "}
+              <span className="text-[var(--crt-accent)]">
+                hey, i&apos;m alamedin
+              </span>{" "}
+              — cs student, accidental founder, anime enjoyer
+            </TerminalLine>
+            <TerminalLine dim>
+              📍 Halifax, NS · CS @ Dalhousie (Winter 2028)
+            </TerminalLine>
+
+            <div className="mt-3 mb-3">
+              <TerminalLine>
+                🧠{" "}
+                <span className="text-[var(--crt-accent)]">the deal</span>
+              </TerminalLine>
+              <TerminalLine dim>
+                {"   "}started a CS degree. got distracted building a company.
+              </TerminalLine>
+              <TerminalLine dim>
+                {"   "}now doing both. not sorry about it.
+              </TerminalLine>
+            </div>
+
+            <div className="mb-3">
+              <TerminalLine>
+                ⚡{" "}
+                <span className="text-[var(--crt-accent)]">
+                  what actually moves me
+                </span>
+              </TerminalLine>
+              <TerminalLine dim>
+                {"   →"} making AI do real work, not just demos
+              </TerminalLine>
+              <TerminalLine dim>
+                {"   →"} shipping before it&apos;s &quot;ready&quot; (it&apos;s
+                never ready)
+              </TerminalLine>
+              <TerminalLine dim>
+                {"   →"} anime 👀 (yes that&apos;s Your Name in the background)
+              </TerminalLine>
+              <TerminalLine dim>
+                {"   →"} the intersection of &quot;this is insane&quot; and
+                &quot;it ships&quot;
+              </TerminalLine>
+            </div>
+
+            <div className="mb-3">
+              <TerminalLine>
+                🚀{" "}
+                <span className="text-[var(--crt-accent)]">
+                  building right now
+                </span>
+              </TerminalLine>
+              <TerminalLine dim>
+                {"   "}TradeLock — fixing licensed trades in Canada, one
+                compliance form at a time
+              </TerminalLine>
+              <TerminalLine dim>
+                {"   "}Comply — AI that actually respects your team&apos;s git
+                conventions
+              </TerminalLine>
+            </div>
+
+            <div className="mb-3 clear-both">
+              <TerminalLine>
+                💀{" "}
+                <span className="text-[var(--crt-accent)]">misc facts</span>
+              </TerminalLine>
+              <TerminalLine dim>
+                {"   →"} built a RAG bot for PG essays just because 🤷
+              </TerminalLine>
+              <TerminalLine dim>
+                {"   →"} commits always end with one &quot;fix: fix the
+                fix&quot;
+              </TerminalLine>
+              <TerminalLine dim>
+                {"   →"} sleep.log is sparse. ideas.txt overflows.
+              </TerminalLine>
+              <TerminalLine dim>
+                {"   →"} rick rubin fan. strips things to their essence. 🎛️
+              </TerminalLine>
+            </div>
+          </CommandBlock>
+
+          {/* ── GitHub Activity ── */}
           {commits.length > 0 && (
             <CommandBlock command="git log --public --oneline">
               {commits.map((c, i) => (
@@ -141,7 +258,7 @@ export default async function Home() {
             </CommandBlock>
           )}
 
-          {/* projects */}
+          {/* ── Projects ── */}
           <CommandBlock command="ls -la ~/projects">
             <TerminalLine dim>
               total 6 · directories are lies, these are ships in the harbor
@@ -181,7 +298,7 @@ export default async function Home() {
             />
           </CommandBlock>
 
-          {/* tech stack */}
+          {/* ── Tech Stack ── */}
           <CommandBlock command="cat ~/stack.txt">
             <TerminalLine>
               Languages:  TypeScript · Python · SQL · Rust (learning)
@@ -198,7 +315,7 @@ export default async function Home() {
             </TerminalLine>
           </CommandBlock>
 
-          {/* ai skills */}
+          {/* ── AI Skills ── */}
           <CommandBlock command="cat ~/ai.txt">
             <TerminalLine>
               Models:     Claude API (Anthropic) · OpenAI-compatible interfaces
@@ -215,7 +332,7 @@ export default async function Home() {
             </TerminalLine>
           </CommandBlock>
 
-          {/* soft skills */}
+          {/* ── Soft Skills ── */}
           <CommandBlock command="cat ~/soft.txt">
             <TerminalLine>
               Shipping:   bias toward done — ideas are cheap, deployed things
@@ -235,7 +352,7 @@ export default async function Home() {
             </TerminalLine>
           </CommandBlock>
 
-          {/* links */}
+          {/* ── Links ── */}
           <CommandBlock command="cat ~/links.txt">
             <TerminalLine>
               email:{" "}

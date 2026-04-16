@@ -27,11 +27,52 @@ body {
   overflow-x: hidden;
 }
 
+/* ── Animated background image ── */
+/* Save public/bg.jpg (or bg.gif for true animation) for this to activate */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  width: 110%;
+  height: 110%;
+  margin: -5%;
+  background-image: url('/bg.gif'), url('/bg.jpg');
+  background-size: cover;
+  background-position: center;
+  z-index: -2;
+  animation: bg-drift 28s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* Dark overlay — keeps terminal text legible over background */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.74);
+  z-index: -1;
+}
+
+@keyframes bg-drift {
+  0%,
+  100% {
+    transform: scale(1) translate(0, 0) translateZ(0);
+  }
+  33% {
+    transform: scale(1.04) translate(-1.5%, 0.5%) translateZ(0);
+  }
+  66% {
+    transform: scale(1.02) translate(1%, -1%) translateZ(0);
+  }
+}
+
+/* ── Typography ── */
 ::selection {
   background: var(--crt-muted);
   color: var(--crt-fg);
 }
 
+/* ── Glow effects ── */
 .crt-glow {
   text-shadow:
     0 0 1px rgba(0, 255, 65, 0.4),
@@ -44,6 +85,7 @@ body {
     0 0 16px rgba(74, 222, 128, 0.2);
 }
 
+/* ── CRT decorative (kept in case re-enabled) ── */
 .crt-scanlines {
   opacity: 0.11;
   background: repeating-linear-gradient(
@@ -59,6 +101,7 @@ body {
   box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.4);
 }
 
+/* ── Terminal layout ── */
 .terminal-indent {
   border-left: 2px solid var(--crt-muted);
   padding-left: 0.75rem;
@@ -70,6 +113,7 @@ body {
   }
 }
 
+/* ── Cursor ── */
 @keyframes crt-blink {
   0%,
   49% {
@@ -85,7 +129,12 @@ body {
   animation: crt-blink 1s step-end infinite;
 }
 
+/* ── Accessibility ── */
 @media (prefers-reduced-motion: reduce) {
+  body::before {
+    animation: none;
+  }
+
   .crt-cursor {
     animation: none;
     opacity: 1;

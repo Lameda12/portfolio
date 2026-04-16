@@ -11,7 +11,11 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "Alamedin Sabit (Lameda12) · Terminal",
   description:
-    "CS @ Dalhousie · Halifax. TradeLock, Comply, and shipping weird software. Fake SSH session aesthetic.",
+    "CS @ Dalhousie · Halifax. TradeLock, Comply, and shipping weird software.",
+  icons: {
+    icon: "/profile.jpg",
+    apple: "/profile.jpg",
+  },
 };
 
 export default function RootLayout({
