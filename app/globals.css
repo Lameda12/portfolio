@@ -28,14 +28,13 @@ body {
 }
 
 /* ── Animated background image ── */
-/* Save public/bg.jpg (or bg.gif for true animation) for this to activate */
 body::before {
   content: '';
   position: fixed;
-  inset: 0;
+  top: -5%;
+  left: -5%;
   width: 110%;
   height: 110%;
-  margin: -5%;
   background-image: url('/bg.gif'), url('/bg.jpg');
   background-size: cover;
   background-position: center;
@@ -44,12 +43,12 @@ body::before {
   will-change: transform;
 }
 
-/* Dark overlay — keeps terminal text legible over background */
+/* Dark overlay — 50% so the GIF is clearly visible but text stays readable */
 body::after {
   content: '';
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.74);
+  background: rgba(0, 0, 0, 0.50);
   z-index: -1;
 }
 
