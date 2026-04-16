@@ -27,43 +27,6 @@ body {
   overflow-x: hidden;
 }
 
-/* ── Animated background image ── */
-body::before {
-  content: '';
-  position: fixed;
-  top: -5%;
-  left: -5%;
-  width: 110%;
-  height: 110%;
-  background-image: url('/bg.gif'), url('/bg.jpg');
-  background-size: cover;
-  background-position: center;
-  z-index: -2;
-  animation: bg-drift 28s ease-in-out infinite;
-  will-change: transform;
-}
-
-/* Dark overlay — 50% so the GIF is clearly visible but text stays readable */
-body::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.50);
-  z-index: -1;
-}
-
-@keyframes bg-drift {
-  0%,
-  100% {
-    transform: scale(1) translate(0, 0) translateZ(0);
-  }
-  33% {
-    transform: scale(1.04) translate(-1.5%, 0.5%) translateZ(0);
-  }
-  66% {
-    transform: scale(1.02) translate(1%, -1%) translateZ(0);
-  }
-}
 
 /* ── Typography ── */
 ::selection {
@@ -130,10 +93,6 @@ body::after {
 
 /* ── Accessibility ── */
 @media (prefers-reduced-motion: reduce) {
-  body::before {
-    animation: none;
-  }
-
   .crt-cursor {
     animation: none;
     opacity: 1;
