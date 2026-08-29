@@ -23,6 +23,7 @@ const RESPONSES: Record<string, string[]> = {
     "  hire         initiate contact sequence",
     "  tradelock    brief on the main thing",
     "  coffee       system diagnostics",
+    "  brainrot     diagnose the vibe",
     "  clear        attempt to clear the void",
     "  exit         you can try",
   ],
@@ -56,6 +57,12 @@ const RESPONSES: Record<string, string[]> = {
     "...",
     "just kidding. the tab stays open.",
     "TradeLock isn't going to build itself.",
+  ],
+  brainrot: [
+    "brainrot level: terminal",
+    "attention span: 8s (down from 12s)",
+    "this portfolio is the disease and the cure",
+    "scroll on.",
   ],
   coffee: [
     "☕ current intake: ~3 cups/day",
@@ -113,16 +120,16 @@ export function EasterEgg() {
       onClick={dismiss}
     >
       <div
-        className="w-full max-w-sm border border-[var(--crt-accent)] bg-[#0d0d0d] px-5 py-4 font-mono shadow-[0_0_40px_rgba(74,222,128,0.12)]"
+        className="w-full max-w-sm border border-[var(--br-lime)] bg-[var(--br-panel)] px-5 py-4 font-mono shadow-[0_0_40px_rgba(182,255,0,0.18)]"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-3 flex items-center justify-between">
-          <span className="text-xs text-[var(--crt-dim)]">
+          <span className="text-xs text-[var(--br-mute)]">
             <span className="opacity-60">$</span> {active.command}
           </span>
           <button
             onClick={dismiss}
-            className="text-xs text-[var(--crt-dim)] opacity-50 hover:opacity-100"
+            className="text-xs text-[var(--br-mute)] opacity-50 hover:opacity-100"
             aria-label="close"
           >
             [esc]
@@ -130,12 +137,12 @@ export function EasterEgg() {
         </div>
         <div className="space-y-0.5">
           {active.output.map((line, i) => (
-            <p key={i} className="whitespace-pre text-sm text-[var(--crt-fg)]">
+            <p key={i} className="whitespace-pre text-sm text-[var(--br-ink)]">
               {line}
             </p>
           ))}
         </div>
-        <p className="mt-4 text-[10px] text-[var(--crt-dim)] opacity-40">
+        <p className="mt-4 text-[10px] text-[var(--br-mute)] opacity-40">
           press esc or click outside to dismiss
         </p>
       </div>

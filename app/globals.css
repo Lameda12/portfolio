@@ -1,12 +1,45 @@
 @import "tailwindcss";
 
+/* ══════════════════════════════════════════════════
+   BRAINROT SYSTEM — design tokens
+   ══════════════════════════════════════════════════ */
 :root {
-  --crt-bg: #0d0d0d;
-  --crt-fg: #d1fae5;
-  --crt-dim: #4ade80;
-  --crt-muted: #166534;
-  --crt-accent: #4ade80;
-  --crt-link: #6ee7b7;
+  --br-bg: #05060a;
+  --br-panel: #0b0d16;
+  --br-ink: #f4f6ff;
+  --br-mute: #8b93b0;
+
+  --br-pink: #ff2d95;
+  --br-cyan: #00e5ff;
+  --br-lime: #b6ff00;
+  --br-yellow: #ffd60a;
+  --br-violet: #9d4edd;
+
+  /* height of the split-screen gameplay strip */
+  --br-strip: 0px;
+}
+
+[data-strip="on"] {
+  --br-strip: 24vh;
+}
+
+@media (min-width: 768px) {
+  [data-strip="on"] {
+    --br-strip: 20vh;
+  }
+}
+
+/* Laptops and landscape phones: give the content back its room. */
+@media (max-height: 760px) {
+  [data-strip="on"] {
+    --br-strip: 15vh;
+  }
+}
+
+@media (max-height: 560px) {
+  [data-strip="on"] {
+    --br-strip: 0px;
+  }
 }
 
 * {
@@ -14,91 +47,246 @@
 }
 
 html {
-  background: var(--crt-bg);
-  color: var(--crt-fg);
+  background: var(--br-bg);
+  color: var(--br-ink);
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
   margin: 0;
-  min-height: 100vh;
-  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
-  background: var(--crt-bg);
-  color: var(--crt-fg);
-  overflow-x: hidden;
+  background: var(--br-bg);
+  color: var(--br-ink);
+  font-family: var(--font-mono), ui-monospace, SFMono-Regular, monospace;
+  overflow: hidden;
+  overscroll-behavior: none;
 }
 
-
-/* ── Typography ── */
 ::selection {
-  background: var(--crt-muted);
-  color: var(--crt-fg);
+  background: var(--br-pink);
+  color: #fff;
 }
 
-/* ── Glow effects ── */
-.crt-glow {
-  text-shadow:
-    0 0 1px rgba(0, 255, 65, 0.4),
-    0 0 6px rgba(0, 255, 65, 0.1);
+.br-display {
+  font-family: var(--font-display), var(--font-mono), sans-serif;
+  letter-spacing: -0.02em;
+  line-height: 0.92;
 }
 
-.crt-glow-strong {
-  text-shadow:
-    0 0 2px rgba(134, 239, 172, 0.6),
-    0 0 16px rgba(74, 222, 128, 0.2);
+/* ── The feed: full-bleed vertical snap scroller ── */
+.br-feed {
+  height: 100%;
+  overflow-y: scroll;
+  overscroll-behavior-y: contain;
+  scroll-snap-type: y mandatory;
+  scrollbar-width: none;
 }
 
-/* ── CRT decorative (kept in case re-enabled) ── */
-.crt-scanlines {
-  opacity: 0.11;
+.br-feed::-webkit-scrollbar {
+  display: none;
+}
+
+.br-post {
+  /* min-height, not height: a post that outgrows the viewport scrolls
+     instead of silently hiding its own call to action. */
+  min-height: calc(100dvh - var(--br-strip));
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+/* ── TikTok caption: heavy text with a hard outline ── */
+.br-outline {
+  paint-order: stroke fill;
+  -webkit-text-stroke: 6px rgba(0, 0, 0, 0.85);
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.6);
+}
+
+.br-outline-thin {
+  paint-order: stroke fill;
+  -webkit-text-stroke: 3px rgba(0, 0, 0, 0.8);
+}
+
+/* ── Glow ── */
+.br-glow-pink {
+  text-shadow: 0 0 18px rgba(255, 45, 149, 0.55), 0 0 44px rgba(255, 45, 149, 0.22);
+}
+
+.br-glow-cyan {
+  text-shadow: 0 0 18px rgba(0, 229, 255, 0.5), 0 0 44px rgba(0, 229, 255, 0.2);
+}
+
+.br-glow-lime {
+  text-shadow: 0 0 18px rgba(182, 255, 0, 0.5), 0 0 44px rgba(182, 255, 0, 0.2);
+}
+
+/* ── Chromatic aberration glitch on headings ── */
+@keyframes br-glitch {
+  0%, 92%, 100% { transform: translate(0, 0); }
+  93% { transform: translate(-2px, 1px); }
+  95% { transform: translate(2px, -1px); }
+  97% { transform: translate(-1px, -1px); }
+}
+
+.br-glitch {
+  position: relative;
+  animation: br-glitch 6s infinite steps(1, end);
+}
+
+.br-glitch::before,
+.br-glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.br-glitch::before {
+  color: var(--br-cyan);
+  transform: translate(-2px, 0);
+  mix-blend-mode: screen;
+  opacity: 0.55;
+}
+
+.br-glitch::after {
+  color: var(--br-pink);
+  transform: translate(2px, 0);
+  mix-blend-mode: screen;
+  opacity: 0.55;
+}
+
+/* ── Marquee ticker ── */
+@keyframes br-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.br-marquee-track {
+  display: inline-flex;
+  white-space: nowrap;
+  animation: br-marquee 22s linear infinite;
+  will-change: transform;
+}
+
+/* ── Spinning record on the engagement rail ── */
+@keyframes br-spin {
+  to { transform: rotate(360deg); }
+}
+
+.br-spin {
+  animation: br-spin 4s linear infinite;
+}
+
+/* ── Heart pop on like ── */
+@keyframes br-pop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.45); }
+  70% { transform: scale(0.92); }
+  100% { transform: scale(1); }
+}
+
+.br-pop {
+  animation: br-pop 0.42s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ── Floating hearts burst ── */
+@keyframes br-float-up {
+  0% { transform: translate(0, 0) scale(0.6); opacity: 0; }
+  15% { opacity: 1; }
+  100% { transform: translate(var(--dx, 0), -110px) scale(1.15); opacity: 0; }
+}
+
+.br-float {
+  animation: br-float-up 900ms ease-out forwards;
+}
+
+/* ── Scroll hint bounce ── */
+@keyframes br-bounce {
+  0%, 100% { transform: translateY(0); opacity: 0.85; }
+  50% { transform: translateY(9px); opacity: 0.35; }
+}
+
+.br-bounce {
+  animation: br-bounce 1.6s ease-in-out infinite;
+}
+
+/* ── Slow drifting gradient blobs ── */
+@keyframes br-drift {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(6%, -5%) scale(1.12); }
+  66% { transform: translate(-5%, 4%) scale(0.94); }
+}
+
+.br-drift {
+  animation: br-drift 18s ease-in-out infinite;
+}
+
+/* ── Post entrance ── */
+@keyframes br-rise {
+  from { transform: translateY(18px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.br-rise > * {
+  animation: br-rise 520ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+.br-rise > *:nth-child(1) { animation-delay: 40ms; }
+.br-rise > *:nth-child(2) { animation-delay: 100ms; }
+.br-rise > *:nth-child(3) { animation-delay: 160ms; }
+.br-rise > *:nth-child(4) { animation-delay: 220ms; }
+.br-rise > *:nth-child(5) { animation-delay: 280ms; }
+.br-rise > *:nth-child(6) { animation-delay: 340ms; }
+
+/* ── Blinking cursor (kept from the terminal era) ── */
+@keyframes br-blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+.br-cursor {
+  animation: br-blink 1s step-end infinite;
+}
+
+/* ── Scanlines over the gameplay strip ── */
+.br-scanlines {
   background: repeating-linear-gradient(
     to bottom,
-    rgba(0, 0, 0, 0.45) 0px,
-    rgba(0, 0, 0, 0.45) 1px,
+    rgba(0, 0, 0, 0.34) 0px,
+    rgba(0, 0, 0, 0.34) 1px,
     transparent 1px,
     transparent 3px
   );
 }
 
-.crt-vignette {
-  box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.4);
+/* ── Noise ── */
+.br-noise {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
 }
 
-/* ── Terminal layout ── */
-.terminal-indent {
-  border-left: 2px solid var(--crt-muted);
-  padding-left: 0.75rem;
-}
-
-@media (min-width: 640px) {
-  .terminal-indent {
-    padding-left: 1rem;
-  }
-}
-
-/* ── Cursor ── */
-@keyframes crt-blink {
-  0%,
-  49% {
-    opacity: 1;
-  }
-  50%,
-  100% {
-    opacity: 0;
-  }
-}
-
-.crt-cursor {
-  animation: crt-blink 1s step-end infinite;
-}
-
-/* ── Accessibility ── */
+/* ── Accessibility: kill the chaos ── */
 @media (prefers-reduced-motion: reduce) {
-  .crt-cursor {
-    animation: none;
-    opacity: 1;
+  .br-marquee-track,
+  .br-spin,
+  .br-glitch,
+  .br-bounce,
+  .br-drift,
+  .br-cursor,
+  .br-pop,
+  .br-float,
+  .br-rise > * {
+    animation: none !important;
   }
 
-  .crt-scanlines {
+  .br-glitch::before,
+  .br-glitch::after {
     display: none;
+  }
+
+  .br-rise > * {
+    opacity: 1;
+    transform: none;
+  }
+
+  .br-feed {
+    scroll-behavior: auto;
   }
 }
