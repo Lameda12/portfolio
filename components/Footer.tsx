@@ -16,7 +16,7 @@ export function Footer() {
         </li>
       </ul>
       <p>
-        EOF. Built in Halifax with Next.js, set in Martian Mono and Literata.
+        EOF. Built in Halifax.
         <span className="cursor" aria-hidden />
       </p>
     </footer>
