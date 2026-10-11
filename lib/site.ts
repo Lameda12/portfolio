@@ -24,7 +24,7 @@ export const now = {
   items: [
     "Learning C++ properly by building an Extended Kalman Filter from scratch, tested in PX4 simulation.",
     "Opening call_human to its first users and writing about what building it taught me.",
-    "Finishing my second year of CS at Dalhousie before a Winter 2027 exchange at City University of Hong Kong.",
+    "In my third year of CS at Dalhousie, heading to a Winter 2027 exchange at City University of Hong Kong.",
   ],
 };
 
