@@ -2,7 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { EasterEgg } from "@/components/EasterEgg";
-import { formatDate, getPosts } from "@/lib/posts";
+import { WritingList } from "@/components/WritingList";
+import { SUBSTACK_PROFILE, getAllWriting } from "@/lib/substack";
 import {
   experience,
   featured,
@@ -92,8 +93,8 @@ function WorkItem({ p }: { p: Project }) {
 }
 
 export default async function Home() {
-  const [commits, posts] = await Promise.all([getGitHubActivity(), getPosts()]);
-  const recentPosts = posts.slice(0, 5);
+  const [commits, writing] = await Promise.all([getGitHubActivity(), getAllWriting()]);
+  const recentPosts = writing.slice(0, 5);
 
   return (
     <>
@@ -161,24 +162,16 @@ export default async function Home() {
 
       <Section label="~/writing">
         {recentPosts.length > 0 ? (
-          <ul className="post-list">
-            {recentPosts.map((p) => (
-              <li key={p.slug}>
-                <time dateTime={p.date}>{formatDate(p.date, "short")}</time>
-                <span>
-                  <Link href={`/blog/${p.slug}`}>{p.title}</Link>
-                  {p.draft && <span className="draft-flag">draft</span>}
-                </span>
-              </li>
-            ))}
-          </ul>
+          <WritingList items={recentPosts} />
         ) : (
           <p className="empty">The first essay is on its way.</p>
         )}
         <p className="mono" style={{ fontSize: "0.8125rem", marginTop: "1.25rem" }}>
           <Link href="/blog">All writing</Link>
-          <span className="muted">, or follow the </span>
-          <a href="/blog/rss.xml">RSS feed</a>
+          <span className="muted">, or subscribe on </span>
+          <a href={SUBSTACK_PROFILE} {...ext}>
+            Substack
+          </a>
         </p>
       </Section>
 

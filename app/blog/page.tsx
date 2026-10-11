@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { formatDate, getPosts, type PostMeta } from "@/lib/posts";
+import { WritingList } from "@/components/WritingList";
+import { SUBSTACK_PROFILE, getAllWriting, type WritingItem } from "@/lib/substack";
+
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: "Writing",
@@ -8,27 +10,11 @@ export const metadata: Metadata = {
   alternates: { canonical: "/blog" },
 };
 
-function PostList({ posts, withYear = false }: { posts: PostMeta[]; withYear?: boolean }) {
-  return (
-    <ul className="post-list">
-      {posts.map((p) => (
-        <li key={p.slug}>
-          <time dateTime={p.date}>{withYear ? p.date.slice(0, 4) : formatDate(p.date, "short")}</time>
-          <span>
-            <Link href={`/blog/${p.slug}`}>{p.title}</Link>
-            {p.draft && <span className="draft-flag">draft</span>}
-          </span>
-        </li>
-      ))}
-    </ul>
-  );
-}
+export default async function BlogIndex() {
+  const items = await getAllWriting();
+  const featured = items.filter((p) => p.featured);
 
-export default function BlogIndex() {
-  const posts = getPosts();
-  const featured = posts.filter((p) => p.featured);
-
-  const byYear = posts.reduce<Map<string, PostMeta[]>>((acc, p) => {
+  const byYear = items.reduce<Map<string, WritingItem[]>>((acc, p) => {
     const y = p.date.slice(0, 4);
     acc.set(y, [...(acc.get(y) ?? []), p]);
     return acc;
@@ -39,11 +25,14 @@ export default function BlogIndex() {
       <div className="page-inner">
         <h1>Writing</h1>
         <p className="intro">
-          Essays on building, AI, and what I notice along the way. New ones go out on the{" "}
-          <a href="/blog/rss.xml">RSS feed</a>.
+          Essays on building, AI, and what I notice along the way. Some live here, some on{" "}
+          <a href={SUBSTACK_PROFILE} target="_blank" rel="noopener noreferrer">
+            Substack
+          </a>
+          . Subscribe there, or follow the <a href="/blog/rss.xml">RSS feed</a> for the ones published here.
         </p>
 
-        {posts.length === 0 && (
+        {items.length === 0 && (
           <p className="empty">
             The first essay is on its way. Add the RSS feed to your reader and it&apos;ll show up there.
           </p>
@@ -52,14 +41,14 @@ export default function BlogIndex() {
         {featured.length > 0 && (
           <>
             <h2 className="year">start here</h2>
-            <PostList posts={featured} withYear />
+            <WritingList items={featured} withYear />
           </>
         )}
 
         {[...byYear.entries()].map(([year, list]) => (
           <section key={year}>
             <h2 className="year">{year}</h2>
-            <PostList posts={list} />
+            <WritingList items={list} />
           </section>
         ))}
       </div>

@@ -14,7 +14,7 @@ export const links = [
   { label: "github", href: "https://github.com/Lameda12" },
   { label: "x", href: "https://x.com/amadisabit" },
   { label: "linkedin", href: "https://www.linkedin.com/in/alamedin-sabit" },
-  { label: "substack", href: "https://alamedin.substack.com" },
+  { label: "substack", href: "https://substack.com/@alamedin" },
   { label: "product hunt", href: "https://www.producthunt.com/@amadisabit" },
 ];
 
